@@ -97,7 +97,9 @@ class Item(Resource):
 class ItemList(Resource):
     def get(self):
 
-        return {'items': [item.json() for item in ItemModel.query.all()]}, 200
+        # use find_all instead of query.all()
+        return {'items': [item.json() for item in ItemModel.find_all()]}  # 200 is default return status
+        # return {'items': [item.json() for item in ItemModel.query.all()]}, 200
         # another solution using map()
         # return {'items': list(map(lambda x: x.json(), ItemModel.query.all()))}, 200
 

@@ -1,9 +1,9 @@
 from flask import Flask
 from flask_restful import Api
 from flask_jwt import JWT
+
 from security import authenticate, identity
 from db import db
-
 from resources.user import UserRegister
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['PROPAGATE_EXCEPTIONS'] = True      #
 app.secret_key = 'ehab'
 api = Api(app)
 db.init_app(app)
