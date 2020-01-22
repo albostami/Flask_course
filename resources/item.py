@@ -1,7 +1,11 @@
 
-# import sqlite3
 from flask_restful import Resource, reqparse
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import (
+    jwt_required,
+    get_jwt_claims,
+    jwt_optional,
+    get_jwt_identity
+)
 
 from models.item import ItemModel
 
@@ -51,15 +55,12 @@ class Item(Resource):
         return item.json(), 201
         # return {'message': 'item added successfully'}, 201
 
+    @jwt_required
     def delete(self, name):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilages required'}, 401
 
-        # connection = sqlite3.connect('data.db')
-        # cursor = connection.cursor()
-        # query = "DELETE FROM item WHERE name=?"
-        # cursor.execute(query, (name,))
-
-        # connection.commit()
-        # connection.close()
         item = ItemModel.find_item_by_name(name)
         if item:
             item.delete_from_db()
@@ -95,11 +96,17 @@ class Item(Resource):
 
 
 class ItemList(Resource):
+    @jwt_optional
     def get(self):
-
+        user_id = get_jwt_identity()
         # use find_all instead of query.all()
-        # 200 is default return status
-        return {'items': [item.json() for item in ItemModel.find_all()]}
+        items = [item.json() for item in ItemModel.find_all()]
+        if user_id:
+            return {'items': items}, 200  # 200 is default return status
+
+        return {'items': [item['name'] for item in items],
+                'message': 'More Data Available if you login'
+                }, 200
         # return {'items': [item.json() for item in ItemModel.query.all()]}, 200
         # another solution using map()
         # return {'items': list(map(lambda x: x.json(), ItemModel.query.all()))}, 200

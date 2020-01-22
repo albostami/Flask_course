@@ -25,6 +25,14 @@ def create_tables():
 
 jwt = JWTManager(app)
 
+
+@jwt.user_claims_loader
+def add_claims_to_jwt(identity):
+    if identity == 1:  # first user id in system is admin ... better to load from db for user better user role management
+        return {'is_admin': True}
+    return {'is_admin': False}
+
+
 api.add_resource(Item, '/item/<string:name>')
 api.add_resource(Store, '/store/<string:name>')
 api.add_resource(ItemList, '/items')

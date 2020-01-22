@@ -6,10 +6,14 @@ from models.user import UserModel
 
 _user_parser = reqparse.RequestParser()
 _user_parser.add_argument(
-    'username', required=True, help="username is reqireed"
+    'username',
+    required=True,
+    help="username is reqireed"
 )
 _user_parser.add_argument(
-    'password', required=True, help="password is reqireed"
+    'password',
+    required=True,
+    help="password is reqireed"
 )
 
 
